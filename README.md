@@ -13,3 +13,18 @@ Schedule:
 1.31 完成poster   
 2.6 Presentation   
 
+
+Data structure
+[   
+{   
+"imgheight": int   
+"imgwidth": int   
+"objects": {   
+            "label":string
+            "segmentation:[[[int,int],...,[int,int]]]"   
+            "id":string   
+            }   
+}   
+...   
+{}   
+]   
