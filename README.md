@@ -19,8 +19,9 @@ Data structure
 {   
 "imgheight": int   
 "imgwidth": int   
-"objects": {   
-            "label":string
+"objects": 
+{   
+            "label":string   
             "segmentation:[[[int,int],...,[int,int]]]"   
             "id":string   
             }   
