@@ -14,7 +14,7 @@ Schedule:
 2.6 Presentation   
 
 
-Data structure
+Data structure   
 [   
 {   
 "imgheight": int   
