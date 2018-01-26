@@ -230,23 +230,27 @@ class Dataset(object):
         self._image_ids = []
         self.image_info = []
         # Background is always the first class
-        self.class_info = [{"source": "", "id": 0, "name": "BG"}]
+        self.class_info = []
         self.source_class_ids = {}
+        self.class_labels = []
 
     def add_class(self, source, class_id, class_name):
         assert "." not in source, "Source name cannot contain a dot"
         # Does the class exist already?
-        for info in self.class_info:
-            if info['source'] == source and info["id"] == class_id:
-                # source.class_id combination already available, skip
-                return
-        # Add the class
-        self.class_info.append({
-            "source": source,
-            "id": class_id,
-            "name": class_name,
-        })
+#         for info in self.class_info:
+#             if info['source'] == source and info["id"] == class_id:
+#                 # source.class_id combination already available, skip
+#                 return
 
+        # Add the class
+        try:
+            self.class_info.append({
+                "source": source,
+                "id": class_id,
+                "name": class_name,
+            })
+        except:
+            print("fuck you")
 #     def add_image(self, source, image_id, path, **kwargs):
 #         image_info = {
 #             "id": image_id,
@@ -345,6 +349,8 @@ class Dataset(object):
         """Load the specified image and return a [H,W,3] Numpy array.
         """
         # Load image
+        # print('**************************load image****************************')
+        # print(self.image_info[image_id]['path'])
         image = skimage.io.imread(self.image_info[image_id]['path'])
         # If grayscale. Convert to RGB for consistency.
         if image.ndim != 3:
