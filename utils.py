@@ -448,16 +448,32 @@ def minimize_mask(bbox, mask, mini_shape):
 
     See inspect_data.ipynb notebook for more details.
     """
+    # instance_index_flag = np.zeros(mask.shape[-1])
     mini_mask = np.zeros(mini_shape + (mask.shape[-1],), dtype=bool)
+    
     for i in range(mask.shape[-1]):
         m = mask[:, :, i]
         y1, x1, y2, x2 = bbox[i][:4]
         m = m[y1:y2, x1:x2]
+        
         if m.size == 0:
+            # instance_index_flag[i] = 1  # change from 0 to 1 if the instance disappears
+            """
+            print("========================utlis.py line 457 debug===================")
+            print("scale: ", scale)
+            print("Mask shape: ", mask.shape)
+            print("Mask debug shape: ", mask_debug.shape)
+            print("mask sum: ", sum(sum(mask[:, :, i])))
+            print("mask_debug sum: ", sum(sum(mask_debug[:, :, i])))
+            print("bbox: ", bbox[i][:4])
+            print("m: \n", m)
             raise Exception("Invalid bounding box with area of zero")
-        m = scipy.misc.imresize(m.astype(float), mini_shape, interp='bilinear')
-        mini_mask[:, :, i] = np.where(m >= 128, 1, 0)
-    return mini_mask
+            """
+        else:
+            m = scipy.misc.imresize(m.astype(float), mini_shape, interp='bilinear')
+            mini_mask[:, :, i] = np.where(m >= 128, 1, 0)
+            
+    return mini_mask # , instance_index_flag
 
 
 def expand_mask(bbox, mini_mask, image_shape):

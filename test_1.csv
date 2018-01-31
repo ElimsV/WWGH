@@ -1,0 +1,2 @@
+epoch;loss;mrcnn_bbox_loss;mrcnn_class_loss;mrcnn_mask_loss;rpn_bbox_loss;rpn_class_loss;val_loss;val_mrcnn_bbox_loss;val_mrcnn_class_loss;val_mrcnn_mask_loss;val_rpn_bbox_loss;val_rpn_class_loss
+0;"""[[nan]]""";"""[[0.00237454]]""";nan;"""[[0.00196619]]""";nan;nan;"""[[nan]]""";"""[[0.]]""";nan;"""[[0.]]""";nan;nan

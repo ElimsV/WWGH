@@ -27,6 +27,7 @@ import keras.layers as KL
 import keras.initializers as KI
 import keras.engine as KE
 import keras.models as KM
+from keras.callbacks import ModelCheckpoint, CSVLogger
 
 import utils
 
@@ -1038,26 +1039,38 @@ def mrcnn_class_loss_graph(target_class_ids, pred_class_logits,
     active_class_ids: [batch, num_classes]. Has a value of 1 for
         classes that are in the dataset of the image, and 0
         for classes that are not in the dataset.
-    """
+    """    
     target_class_ids = tf.cast(target_class_ids, 'int64')
 
+    # debug
+    print("target_class_ids: ", target_class_ids)
+    print("pred_class_logits: ", pred_class_logits)
+    print("active_class_ids: ", active_class_ids)
+    
     # Find predictions of classes that are not in the dataset.
     pred_class_ids = tf.argmax(pred_class_logits, axis=2)
+    print("pred_class_ids: ", pred_class_ids)
+    # pred_class_ids = tf.Print(pred_class_ids, [pred_class_ids], "pred_class_ids: ")
+    pred_class_ids = K.print_tensor(pred_class_ids, message="pred_class_ids: ")
+    
     # TODO: Update this line to work with batch > 1. Right now it assumes all
     #       images in a batch have the same active_class_ids
     pred_active = tf.gather(active_class_ids[0], pred_class_ids)
-
+    print("pred_active: ", pred_active)
+    
     # Loss
     loss = tf.nn.sparse_softmax_cross_entropy_with_logits(
         labels=target_class_ids, logits=pred_class_logits)
-
+    print("loss1: ", loss)
+    
     # Erase losses of predictions of classes that are not in the active
     # classes of the image.
     loss = loss * pred_active
-
+    print("loss2: ", loss)
     # Computer loss mean. Use only predictions that contribute
     # to the loss to get a correct mean.
     loss = tf.reduce_sum(loss) / tf.reduce_sum(pred_active)
+    print("loss3: ", loss)
     return loss
 
 
@@ -1161,12 +1174,15 @@ def load_image_gt(dataset, config, image_id, augment=False,
     # Load image and mask
     image = dataset.load_image(image_id)
     mask, class_ids = dataset.load_mask(image_id)
+    
     shape = image.shape
+    
     image, window, scale, padding = utils.resize_image(
         image,
         min_dim=config.IMAGE_MIN_DIM,
         max_dim=config.IMAGE_MAX_DIM,
         padding=config.IMAGE_PADDING)
+    
     mask = utils.resize_mask(mask, scale, padding)
 
     # Random horizontal flips.
@@ -2175,12 +2191,18 @@ class MaskRCNN():
                                        batch_size=self.config.BATCH_SIZE,
                                        augment=False)
 
+        saved_model_name = 'test'
+        log_file = saved_model_name + '.csv'
+        csv_logger = CSVLogger(log_file, append=True, separator=';')
+        
         # Callbacks
         callbacks = [
             keras.callbacks.TensorBoard(log_dir=self.log_dir,
-                                        histogram_freq=0, write_graph=True, write_images=False),
+                                        histogram_freq=0, write_graph=True, write_grads=False, write_images=False),
             keras.callbacks.ModelCheckpoint(self.checkpoint_path,
                                             verbose=0, save_weights_only=True),
+            csv_logger,
+            keras.callbacks.TerminateOnNaN()
         ]
 
         # Train
