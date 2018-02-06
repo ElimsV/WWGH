@@ -6,6 +6,7 @@
 - `utils.py` contains some help function which is more general
 - `visualize.py` contains functions to draw images and visualize region proposals.
 - `pycocotools` we use this tools to load mask.
+- `evaluation_city.py` we use this to evaluate the AP to test our model
 
 ## Loading Dataset
 To generate a all-in-one annotation file, we use `generate_annotations.py`.
@@ -15,6 +16,7 @@ The main code for training is `cityscape.py`. We use this file together with `mo
 
 ## Evaluation
 To evaluate out model, we use `demo` notebook to obtain bounding box, mask and classification outputs.
+Also, we use 'evaluation_city.py' to get the APs, not only on the sinle image, but also on subset with any size of the whole validation set. The model_path indicates the model path to be loaded. 
 
 ## Visualization
 We use `rpn_visualization` notebook to visualize region proposals and `inspect_weights` notebook to draw histogram of weights.
